@@ -5,6 +5,7 @@
  */
 package RestWS;
 
+import com.google.gson.Gson;
 import static com.sun.mail.imap.protocol.INTERNALDATE.format;
 import database.accessBD;
 import database.imageBD;
@@ -29,6 +30,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.json.JSONObject;
 
 /**
  * REST Web Service
@@ -67,31 +69,34 @@ public class restService {
      * @param author
      * @param creator
      * @param capt_date
-     * @param filename
      * @return
      */
     @Path("register")
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Produces(MediaType.TEXT_HTML)
+    @Produces(MediaType.APPLICATION_JSON)
     public String registerImage(@FormParam("title") String title,
             @FormParam("description") String description,
             @FormParam("keywords") String keywords,
             @FormParam("author") String author,
             @FormParam("creator") String creator,
-            @FormParam("capture") Date capt_date,
-            @FormParam("filename") String filename) {
-        String result = "<h2>La imagen no se ha podido subir al servidor</h2>";
+            @FormParam("capture") String capt_date) {
+        
+        String filename = title.replaceAll(" ", "_");
+        filename += ".jpg";
+        JSONObject obj = new JSONObject();
         try {
             accessBD basedatos = new accessBD("org.apache.derby.jdbc.ClientDriver", "jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");
             imageBD datosimagenes = new imageBD(basedatos);
-            if (datosimagenes.insertarImagen(title, description, keywords, author, creator, format(capt_date), filename)) {
-                result = "<h2>Imagen subida correctamente al servidor</h2>";
-            }
+        if (datosimagenes.insertarImagen(title, description, keywords, author, creator, capt_date, filename)) {
+            obj.put("IsSuccessful", true);
+        }
         } catch (SQLException | IOException | ParseException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
+            obj.put("IsSucceful", false);
         }
-        return webcode + result + webcode_end;
+            String resultat = obj.toString();
+        return resultat;
     }
 
     /**
