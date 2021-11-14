@@ -172,14 +172,7 @@ public class restService {
             accessBD basedatos = new accessBD("org.apache.derby.jdbc.ClientDriver", "jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");
             imageBD datosimagenes = new imageBD(basedatos);
             ArrayList<Image> imagenes = datosimagenes.listImagenes();
-            //if (imagenes != null) {
-               result = new Gson().toJson(imagenes);
-           // } else {
-               //JSONArray obj = new JSONArray();
-              // obj.put("null");
-               //result = obj.toString();
-            //}
-            
+            result = new Gson().toJson(imagenes);   
         } catch (SQLException | IOException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             JSONArray obj = new JSONArray();
