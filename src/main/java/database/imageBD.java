@@ -96,8 +96,39 @@ public class imageBD {
 
         return ids;
     }
+    
+    //Devuelve un ArrayList con Imagenes a partir de su id
+    public ArrayList<Image> buscarId(String tag) throws SQLException {
+        ArrayList<Image> imagenes = null;
+        PreparedStatement statement;
+        String query = "SELECT id, title, description, keywords, author, creator, capture_date, "
+                + "storage_date, filename FROM image WHERE id LIKE ? ORDER BY id DESC";
 
-    //Devuelve un ArrayList con Imagenee a partir de su titulo
+        String palabra = '%' + tag + '%';
+        statement = base_dades.getConnection().prepareStatement(query);
+        statement.setString(1, palabra);
+        ResultSet rs = statement.executeQuery();
+
+        if (rs.next()) {
+            imagenes = new ArrayList<>();
+            Image imagen_first = new Image(rs.getInt("id"), rs.getString("title"), rs.getString("description"), rs.getString("keywords"),
+                    rs.getString("author"), rs.getString("creator"), rs.getString("capture_date"), rs.getString("storage_date"),
+                    rs.getString("filename"));
+
+            imagenes.add(imagen_first);
+            while (rs.next()) {
+                Image imagen = new Image(rs.getInt("id"), rs.getString("title"), rs.getString("description"), rs.getString("keywords"),
+                        rs.getString("author"), rs.getString("creator"), rs.getString("capture_date"), rs.getString("storage_date"),
+                        rs.getString("filename"));
+
+                imagenes.add(imagen);
+            }
+        }
+
+        return imagenes;
+    }
+
+    //Devuelve un ArrayList con Imagenes a partir de su titulo
     public ArrayList<Image> buscarTitle(String tag) throws SQLException {
         ArrayList<Image> imagenes = null;
         PreparedStatement statement;
@@ -128,7 +159,7 @@ public class imageBD {
         return imagenes;
     }
 
-    //Devuelve un ArrayList con Imagenee a partir de su fecha de creacion
+    //Devuelve un ArrayList con Imagenes a partir de su fecha de creacion formato dd/mm/yyyy
     public ArrayList<Image> buscarFecha(String tag) throws SQLException {
         ArrayList<Image> imagenes = null;
         PreparedStatement statement;
@@ -158,8 +189,9 @@ public class imageBD {
 
         return imagenes;
     }
+    
 
-    //Devuelve un ArrayList con Imagenee a partir de sus keywords
+    //Devuelve un ArrayList con Imagenes a partir de sus keywords
     public ArrayList<Image> buscarKeywords(String tag) throws SQLException {
         ArrayList<Image> imagenes = null;
         PreparedStatement statement;
@@ -190,7 +222,7 @@ public class imageBD {
         return imagenes;
     }
 
-    //Devuelve un ArrayList con Imagenee a partir de su creador
+    //Devuelve un ArrayList con Imagenes a partir de su creador
     public ArrayList<Image> buscarAuthor(String tag) throws SQLException {
         ArrayList<Image> imagenes = null;
         PreparedStatement statement;
@@ -220,6 +252,8 @@ public class imageBD {
 
         return imagenes;
     }
+    
+    
     
     //Devuelve una imagen a partir de su id
     public Image getImage(int id) throws SQLException {
