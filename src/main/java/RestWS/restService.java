@@ -31,6 +31,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.json.JSONObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.json.JSONArray;
 
 /**
  * REST Web Service
@@ -88,14 +93,14 @@ public class restService {
         try {
             accessBD basedatos = new accessBD("org.apache.derby.jdbc.ClientDriver", "jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");
             imageBD datosimagenes = new imageBD(basedatos);
-        if (datosimagenes.insertarImagen(title, description, keywords, author, creator, capt_date, filename)) {
+            datosimagenes.insertarImagen(title, description, keywords, author, creator, capt_date, filename);
             obj.put("IsSuccessful", true);
-        }
+            
         } catch (SQLException | IOException | ParseException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             obj.put("IsSucceful", false);
         }
-            String resultat = obj.toString();
+        String resultat = obj.toString();
         return resultat;
     }
 
@@ -114,7 +119,7 @@ public class restService {
     @Path("modify")
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Produces(MediaType.TEXT_HTML)
+    @Produces(MediaType.APPLICATION_JSON)
     public String modifyImage(@FormParam("id") String id,
             @FormParam("title") String title,
             @FormParam("description") String description,
@@ -135,19 +140,22 @@ public class restService {
     @Path("delete")
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Produces(MediaType.TEXT_HTML)
+    @Produces(MediaType.APPLICATION_JSON)
     public String deleteImage(@FormParam("id") String id) {
-        String result = "<h2>La imagen no se ha podido eliminar del servidor</h2>";
+      
+        JSONObject obj = new JSONObject();
         try {
             accessBD basedatos = new accessBD("org.apache.derby.jdbc.ClientDriver", "jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");
             imageBD datosimagenes = new imageBD(basedatos);
-            if (datosimagenes.eliminarImagen(id)) {
-                result = "<h2>Imagen eliminada correctamente del servidor</h2>";
-            }
+            datosimagenes.eliminarImagen(id);
+            obj.put("IsSuccessful", true);
+            
         } catch (SQLException | IOException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
+            obj.put("IsSucceful", false);
         }
-        return webcode + result + webcode_end;
+        String resultat = obj.toString();
+        return resultat;
     }
 
     /**
@@ -157,32 +165,28 @@ public class restService {
      */
     @Path("list")
     @GET
-    @Produces(MediaType.TEXT_HTML)
+    @Produces(MediaType.APPLICATION_JSON)
     public String listImages() {
-        String result = "<h2>Ninguna imagen disponible</h2>";
+        String result;
         try {
             accessBD basedatos = new accessBD("org.apache.derby.jdbc.ClientDriver", "jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");
             imageBD datosimagenes = new imageBD(basedatos);
             ArrayList<Image> imagenes = datosimagenes.listImagenes();
-            Iterator<Image> it = imagenes.iterator();
-            if (it.hasNext()) {
-                result = "<h2>Listado de imagenes: </h2>";
-            }
-            while (it.hasNext()) {
-                Image img = (Image) it.next();
-                if (1 == 1/*user.equals(img.getCreator())*/) {
-                    result += "<tr><td>" + img.getTitle() + "</td>"
-                            + "<td> <a href='./modificarImagen.jsp?id=" + img.getId() + "'>Modificar</a> </td>"
-                            + "<td> <a href='./eliminarImagen.jsp?id=" + img.getId() + "'>Eliminar</a> </td><br/>";
-                } else {
-                    result += "<tr><td>" + img.getFilename() + "</td>"
-                            + "<td> <a href='./images/" + img.getFilename() + "'>Ver</a> </td><br/>";
-                }
-            }
+            //if (imagenes != null) {
+               result = new Gson().toJson(imagenes);
+           // } else {
+               //JSONArray obj = new JSONArray();
+              // obj.put("null");
+               //result = obj.toString();
+            //}
+            
         } catch (SQLException | IOException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
+            JSONArray obj = new JSONArray();
+            obj.put("error");
+            result = obj.toString();
         }
-        return webcode + result + webcode_end;
+        return result;
     }
 
     /**
@@ -193,7 +197,7 @@ public class restService {
      */
     @Path("searchID/{id}")
     @GET
-    @Produces(MediaType.TEXT_HTML)
+    @Produces(MediaType.APPLICATION_JSON)
     public String searchByID(@PathParam("id") int id) {
         String result = "<h2>Ninguna imagen disponible</h2>";
         try {
@@ -227,7 +231,7 @@ public class restService {
      */
     @Path("searchTitle/{title}")
     @GET
-    @Produces(MediaType.TEXT_HTML)
+    @Produces(MediaType.APPLICATION_JSON)
     public String searchByTitle(@PathParam("title") String title) {
         String result = "<h2>Ninguna imagen disponible</h2>";
         try {
@@ -257,7 +261,7 @@ public class restService {
      */
     @Path("searchCreationDate/{date}")
     @GET
-    @Produces(MediaType.TEXT_HTML)
+    @Produces(MediaType.APPLICATION_JSON)
     public String searchByCreationDate(@PathParam("date") String date) {
         String result = "<h2>Ninguna imagen disponible</h2>";
         try {
@@ -286,7 +290,7 @@ public class restService {
      */
     @Path("searchAuthor/{author}")
     @GET
-    @Produces(MediaType.TEXT_HTML)
+    @Produces(MediaType.APPLICATION_JSON)
     public String searchByAuthor(@PathParam("author") String author) {
         String result = "<h2>Ninguna imagen disponible</h2>";
         try {
@@ -315,7 +319,7 @@ public class restService {
      */
     @Path("searchKeywords/{keywords}")
     @GET
-    @Produces(MediaType.TEXT_HTML)
+    @Produces(MediaType.APPLICATION_JSON)
     public String searchByKeywords(@PathParam("keywords") String keywords) {
         String result = "<h2>Ninguna imagen disponible</h2>";
         try {
