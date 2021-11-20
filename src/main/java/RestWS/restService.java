@@ -37,7 +37,6 @@ import org.json.JSONArray;
 @RequestScoped
 public class restService {
 
-
     /**
      * Creates a new instance of restService
      */
@@ -65,7 +64,7 @@ public class restService {
             @FormParam("author") String author,
             @FormParam("creator") String creator,
             @FormParam("capture") String capt_date) {
-        
+
         String filename = title.replaceAll(" ", "_");
         filename += ".jpg";
         JSONObject obj = new JSONObject();
@@ -74,7 +73,7 @@ public class restService {
             imageBD datosimagenes = new imageBD(basedatos);
             datosimagenes.insertarImagen(title, description, keywords, author, creator, capt_date, filename);
             obj.put("IsSuccessful", true);
-            
+
         } catch (SQLException | IOException | ParseException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             obj.put("IsSucceful", false);
@@ -106,14 +105,14 @@ public class restService {
             @FormParam("author") String author,
             @FormParam("creator") String creator,
             @FormParam("capture") String capt_date) {
-        
+
         JSONObject obj = new JSONObject();
         try {
             accessBD basedatos = new accessBD("org.apache.derby.jdbc.ClientDriver", "jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");
             imageBD datosimagenes = new imageBD(basedatos);
             datosimagenes.modificaImagen(id, title, description, keywords, author, capt_date);
             obj.put("IsSuccessful", true);
-            
+
         } catch (SQLException | IOException | ParseException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             obj.put("IsSucceful", false);
@@ -133,14 +132,14 @@ public class restService {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public String deleteImage(@FormParam("id") String id) {
-      
+
         JSONObject obj = new JSONObject();
         try {
             accessBD basedatos = new accessBD("org.apache.derby.jdbc.ClientDriver", "jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");
             imageBD datosimagenes = new imageBD(basedatos);
             datosimagenes.eliminarImagen(id);
             obj.put("IsSuccessful", true);
-            
+
         } catch (SQLException | IOException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             obj.put("IsSucceful", false);
@@ -163,7 +162,7 @@ public class restService {
             accessBD basedatos = new accessBD("org.apache.derby.jdbc.ClientDriver", "jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");
             imageBD datosimagenes = new imageBD(basedatos);
             ArrayList<Image> imagenes = datosimagenes.listImagenes();
-            result = new Gson().toJson(imagenes);   
+            result = new Gson().toJson(imagenes);
         } catch (SQLException | IOException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             JSONArray obj = new JSONArray();
@@ -188,7 +187,7 @@ public class restService {
             accessBD basedatos = new accessBD("org.apache.derby.jdbc.ClientDriver", "jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");
             imageBD datosimagenes = new imageBD(basedatos);
             ArrayList<Image> imagenes = datosimagenes.buscarId(Integer.toString(id));
-            result = new Gson().toJson(imagenes);   
+            result = new Gson().toJson(imagenes);
         } catch (SQLException | IOException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             JSONArray obj = new JSONArray();
@@ -196,7 +195,7 @@ public class restService {
             result = obj.toString();
         }
         return result;
-        
+
     }
 
     /**
@@ -214,7 +213,7 @@ public class restService {
             accessBD basedatos = new accessBD("org.apache.derby.jdbc.ClientDriver", "jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");
             imageBD datosimagenes = new imageBD(basedatos);
             ArrayList<Image> imagenes = datosimagenes.buscarTitle(title);
-            result = new Gson().toJson(imagenes);   
+            result = new Gson().toJson(imagenes);
         } catch (SQLException | IOException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             JSONArray obj = new JSONArray();
@@ -242,12 +241,12 @@ public class restService {
             Date fecha_captura = formatter.parse(date);
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             String fecha_str = sdf.format(fecha_captura);
-            
+
             accessBD basedatos = new accessBD("org.apache.derby.jdbc.ClientDriver", "jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");
             imageBD datosimagenes = new imageBD(basedatos);
             ArrayList<Image> imagenes = datosimagenes.buscarFecha(fecha_str);
-            result = new Gson().toJson(imagenes);   
-        } catch (SQLException | IOException |ParseException ex) {
+            result = new Gson().toJson(imagenes);
+        } catch (SQLException | IOException | ParseException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             JSONArray obj = new JSONArray();
             obj.put("error");
@@ -271,7 +270,7 @@ public class restService {
             accessBD basedatos = new accessBD("org.apache.derby.jdbc.ClientDriver", "jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");
             imageBD datosimagenes = new imageBD(basedatos);
             ArrayList<Image> imagenes = datosimagenes.buscarAuthor(author);
-            result = new Gson().toJson(imagenes);   
+            result = new Gson().toJson(imagenes);
         } catch (SQLException | IOException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             JSONArray obj = new JSONArray();
@@ -296,7 +295,7 @@ public class restService {
             accessBD basedatos = new accessBD("org.apache.derby.jdbc.ClientDriver", "jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");
             imageBD datosimagenes = new imageBD(basedatos);
             ArrayList<Image> imagenes = datosimagenes.buscarKeywords(keywords);
-            result = new Gson().toJson(imagenes);   
+            result = new Gson().toJson(imagenes);
         } catch (SQLException | IOException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             JSONArray obj = new JSONArray();
@@ -306,5 +305,77 @@ public class restService {
         return result;
     }
 
+    /**
+     * GET method to search images by keyword
+     *
+     * @param value
+     * @param title
+     * @param description
+     * @param keywords
+     * @param creator
+     * @param author
+     * @param storage_date
+     * @param capture_date
+     * @param filename
+     * @return
+     */
+    @Path("searchMultiatribute/{value}/{title}/{description}/{keywords}/{author}/{creator}/{capture_date}/{storage_date}/{filename}")
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String searchMultiatribute(@PathParam("value") String value, @PathParam("title") String title,
+            @PathParam("description") String description, @PathParam("keywords") String keywords,
+            @PathParam("author") String author, @PathParam("creator") String creator,
+            @PathParam("capture_date") String capture_date, @PathParam("storage_date") String storage_date,
+            @PathParam("filename") String filename) {
+        String result;
+        Boolean title_check = false;
+        Boolean description_check = false;
+        Boolean keywords_check = false;
+        Boolean author_check = false;
+        Boolean creator_check = false;
+        Boolean captureDate_check = false;
+        Boolean storageDate_check = false;
+        Boolean filename_check = false;
+        if (title != null) {
+            title_check = true;
+        }
+        if (description != null) {
+            description_check = true;
+        }
+        if (keywords != null) {
+            keywords_check = true;
+        }
+        if (author != null) {
+            author_check = true;
+        }
+        if (creator != null) {
+            creator_check = true;
+        }
+        if (capture_date != null) {
+            captureDate_check = true;
+        }
+        if (storage_date != null) {
+            storageDate_check = true;
+        }
+        if (filename != null) {
+            filename_check = true;
+        }
+
+        try {
+            accessBD basedatos = new accessBD("org.apache.derby.jdbc.ClientDriver", "jdbc:derby://localhost:1527/pr2;user=pr2;password=pr2");
+            imageBD datosimagenes = new imageBD(basedatos);
+            ArrayList<Image> imagenes = datosimagenes.busquedaMultivaluada(value, title_check, description_check, keywords_check,
+                    author_check, creator_check, captureDate_check, storageDate_check, filename_check);
+            result = new Gson().toJson(imagenes);
+        } catch (SQLException | IOException ex) {
+            Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
+            JSONArray obj = new JSONArray();
+            obj.put("error");
+            result = obj.toString();
+        }
+        result = "";
+        return result;
+    }
 
 }

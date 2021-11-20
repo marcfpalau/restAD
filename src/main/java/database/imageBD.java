@@ -13,6 +13,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -96,17 +99,16 @@ public class imageBD {
 
         return ids;
     }
-    
+
     //Devuelve un ArrayList con Imagenes a partir de su id
     public ArrayList<Image> buscarId(String tag) throws SQLException {
         ArrayList<Image> imagenes = null;
         PreparedStatement statement;
-        String query = "SELECT id, title, description, keywords, author, creator, capture_date, "
-                + "storage_date, filename FROM image WHERE id LIKE ? ORDER BY id DESC";
+        String query = "SELECT * FROM image WHERE id = ?";
 
-        String palabra = '%' + tag + '%';
+        String palabra = tag;
         statement = base_dades.getConnection().prepareStatement(query);
-        statement.setString(1, palabra);
+        statement.setString(1, tag);
         ResultSet rs = statement.executeQuery();
 
         if (rs.next()) {
@@ -189,7 +191,6 @@ public class imageBD {
 
         return imagenes;
     }
-    
 
     //Devuelve un ArrayList con Imagenes a partir de sus keywords
     public ArrayList<Image> buscarKeywords(String tag) throws SQLException {
@@ -252,9 +253,7 @@ public class imageBD {
 
         return imagenes;
     }
-    
-    
-    
+
     //Devuelve una imagen a partir de su id
     public Image getImage(int id) throws SQLException {
 
@@ -337,5 +336,85 @@ public class imageBD {
         return i > 0;
     }
 
+    //Devuelve un ArrayList con IDs a partir de un string y parametros que definen los parametros a buscar
+    public ArrayList<Image> busquedaMultivaluada(String tag, Boolean title_check, Boolean description_check, Boolean keywords_check,
+            Boolean author_check, Boolean creator_check, Boolean capture_date_check, Boolean storage_date_check, Boolean filename_check) throws SQLException {
+
+        ArrayList<Integer> ids = new ArrayList<>();
+        PreparedStatement statement;
+        int checks = 0;
+
+        String query = "SELECT id FROM image WHERE id = 0 ";
+        if (title_check) {
+            query += "OR title LIKE ? ";
+            checks++;
+        }
+        if (description_check) {
+            query += "OR description LIKE ? ";
+            checks++;
+        }
+        if (keywords_check) {
+            query += "OR keywords LIKE ? ";
+            checks++;
+        }
+        if (author_check) {
+            query += "OR author LIKE ? ";
+            checks++;
+        }
+        if (creator_check) {
+            query += "OR creator LIKE ? ";
+            checks++;
+        }
+        if (capture_date_check) {
+            query += "OR capture_date LIKE ? ";
+            checks++;
+        }
+        if (storage_date_check) {
+            query += "OR storage_date LIKE ? ";
+            checks++;
+        }
+        if (filename_check) {
+            query += "OR filename LIKE ? ";
+            checks++;
+        }
+        query += "ORDER BY id DESC";
+
+        String[] keywords = tag.split(", ");
+        for (int i = 0; i < keywords.length; ++i) {
+            String palabra = '%' + keywords[i] + '%';
+            statement = base_dades.getConnection().prepareStatement(query);
+            for (int j = 0; j < checks; ++j) {
+                statement.setString(j + 1, palabra);
+            }
+            ResultSet rs = statement.executeQuery();
+
+            if (!rs.next()) {
+                ids.add(0);
+            } else {
+                if (!ids.contains(rs.getInt(1))) {
+                    ids.add(rs.getInt(1));
+                    while (rs.next()) {
+                        if (!ids.contains(rs.getInt(1))) {
+                            ids.add(rs.getInt(1));
+                        }
+                    }
+                }
+            }
+
+        }
+        ArrayList<Image> imagenes = null;
+        Iterator<Integer> iter = ids.iterator();
+        if (iter.hasNext()) {
+            imagenes = new ArrayList<>();
+            Image imagen_first = getImage(iter.next());
+
+            imagenes.add(imagen_first);
+            while (iter.hasNext()) {
+                Image imagen = getImage(iter.next());
+                imagenes.add(imagen);
+            }
+        }
+        return imagenes;
+    }
 
 }
