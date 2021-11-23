@@ -319,15 +319,15 @@ public class restService {
      * @param filename
      * @return
      */
-    @Path("searchMultiatribute/{value}/{title}/{description}/{keywords}/{author}/{creator}/{capture_date}/{storage_date}/{filename}")
+    @Path("searchMultiatribute/")
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public String searchMultiatribute(@PathParam("value") String value, @PathParam("title") String title,
-            @PathParam("description") String description, @PathParam("keywords") String keywords,
-            @PathParam("author") String author, @PathParam("creator") String creator,
-            @PathParam("capture_date") String capture_date, @PathParam("storage_date") String storage_date,
-            @PathParam("filename") String filename) {
+    public String searchMultiatribute(@FormParam("value") String value, @FormParam("title") String title,
+            @FormParam("description") String description, @FormParam("keywords") String keywords,
+            @FormParam("author") String author, @FormParam("creator") String creator,
+            @FormParam("capture_date") String capture_date, @FormParam("storage_date") String storage_date,
+            @FormParam("filename") String filename) {
         String result;
         Boolean title_check = false;
         Boolean description_check = false;
@@ -374,7 +374,6 @@ public class restService {
             obj.put("error");
             result = obj.toString();
         }
-        result = "";
         return result;
     }
 
