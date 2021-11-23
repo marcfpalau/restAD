@@ -73,7 +73,7 @@ public class restService {
             imageBD datosimagenes = new imageBD(basedatos);
             datosimagenes.insertarImagen(title, description, keywords, author, creator, capt_date, filename);
             obj.put("IsSuccessful", true);
-
+            basedatos.fiConexio();
         } catch (SQLException | IOException | ParseException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             obj.put("IsSucceful", false);
@@ -112,7 +112,7 @@ public class restService {
             imageBD datosimagenes = new imageBD(basedatos);
             datosimagenes.modificaImagen(id, title, description, keywords, author, capt_date);
             obj.put("IsSuccessful", true);
-
+            basedatos.fiConexio();
         } catch (SQLException | IOException | ParseException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             obj.put("IsSucceful", false);
@@ -139,7 +139,7 @@ public class restService {
             imageBD datosimagenes = new imageBD(basedatos);
             datosimagenes.eliminarImagen(id);
             obj.put("IsSuccessful", true);
-
+            basedatos.fiConexio();
         } catch (SQLException | IOException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             obj.put("IsSucceful", false);
@@ -163,6 +163,7 @@ public class restService {
             imageBD datosimagenes = new imageBD(basedatos);
             ArrayList<Image> imagenes = datosimagenes.listImagenes();
             result = new Gson().toJson(imagenes);
+            basedatos.fiConexio();
         } catch (SQLException | IOException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             JSONArray obj = new JSONArray();
@@ -188,6 +189,7 @@ public class restService {
             imageBD datosimagenes = new imageBD(basedatos);
             ArrayList<Image> imagenes = datosimagenes.buscarId(Integer.toString(id));
             result = new Gson().toJson(imagenes);
+            basedatos.fiConexio();
         } catch (SQLException | IOException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             JSONArray obj = new JSONArray();
@@ -214,6 +216,7 @@ public class restService {
             imageBD datosimagenes = new imageBD(basedatos);
             ArrayList<Image> imagenes = datosimagenes.buscarTitle(title);
             result = new Gson().toJson(imagenes);
+            basedatos.fiConexio();
         } catch (SQLException | IOException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             JSONArray obj = new JSONArray();
@@ -246,6 +249,7 @@ public class restService {
             imageBD datosimagenes = new imageBD(basedatos);
             ArrayList<Image> imagenes = datosimagenes.buscarFecha(fecha_str);
             result = new Gson().toJson(imagenes);
+            basedatos.fiConexio();
         } catch (SQLException | IOException | ParseException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             JSONArray obj = new JSONArray();
@@ -271,6 +275,7 @@ public class restService {
             imageBD datosimagenes = new imageBD(basedatos);
             ArrayList<Image> imagenes = datosimagenes.buscarAuthor(author);
             result = new Gson().toJson(imagenes);
+            basedatos.fiConexio();
         } catch (SQLException | IOException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             JSONArray obj = new JSONArray();
@@ -296,6 +301,7 @@ public class restService {
             imageBD datosimagenes = new imageBD(basedatos);
             ArrayList<Image> imagenes = datosimagenes.buscarKeywords(keywords);
             result = new Gson().toJson(imagenes);
+            basedatos.fiConexio();
         } catch (SQLException | IOException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             JSONArray obj = new JSONArray();
@@ -368,6 +374,7 @@ public class restService {
             ArrayList<Image> imagenes = datosimagenes.busquedaMultivaluada(value, title_check, description_check, keywords_check,
                     author_check, creator_check, captureDate_check, storageDate_check, filename_check);
             result = new Gson().toJson(imagenes);
+            basedatos.fiConexio();
         } catch (SQLException | IOException ex) {
             Logger.getLogger(restService.class.getName()).log(Level.SEVERE, null, ex);
             JSONArray obj = new JSONArray();
